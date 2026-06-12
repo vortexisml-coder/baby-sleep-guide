@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>LunaRest — Baby Sleep Guide</title>
+<meta name="description" content="Free baby sleep guide app. Solve newborn sleep problems, sleep training, cry decoder and sleep schedules by age.">
+<meta name="keywords" content="baby sleep, newborn sleep, sleep training, baby won't sleep, baby sleep schedule, colic, sleep regression">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ═══════════════════════════════════════════
+  GOOGLE ADSENSE — Replace with YOUR code after
+  getting approved at adsense.google.com
+  ════════════════════════════════════════════ -->
+<!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR-ID" crossorigin="anonymous"></script> -->
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --night:#0D1128;--deep:#141830;--surface:#1C2340;--surface2:#222A4A;--surface3:#2A3358;
+  --lavender:#B8A6E8;--lav2:#D4C8F5;--lav3:#EDE8FB;
+  --moon:#FFE9A0;--blush:#F4A8C0;--mint:#8FD5B8;--red:#FF6B6B;--gold:#F5C842;
+  --text:#EEF0F8;--muted:#8892B0;--muted2:#6A7490;
+}
+html,body{background:#080B1A;display:flex;justify-content:center;min-height:100vh;font-family:'Nunito',sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+#app{width:100%;max-width:390px;min-height:100vh;background:var(--night);position:relative;display:flex;flex-direction:column}
+.screen{display:none;flex-direction:column;flex:1;overflow-y:auto;overflow-x:hidden}
+.screen.active{display:flex}
+
+/* STARS */
+.stars-bg{position:fixed;top:0;left:50%;transform:translateX(-50%);width:390px;height:260px;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) ease-in-out infinite var(--delay,0s)}
+@keyframes twinkle{0%,100%{opacity:.1}50%{opacity:.6}}
+
+/* TOPBAR */
+.topbar{padding:48px 20px 12px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+.topbar-logo{font-family:'Crimson Pro',serif;font-size:21px;font-weight:700;color:var(--lav2)}
+.topbar-logo span{display:block;font-size:10px;font-family:'Nunito',sans-serif;font-weight:500;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+.topbar-icon{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid rgba(184,166,232,.15);display:flex;align-items:center;justify-content:center;font-size:18px}
+
+/* AD BANNER SLOT */
+.ad-slot{margin:0 20px 16px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.08);border-radius:12px;padding:12px;text-align:center;position:relative;z-index:2;min-height:60px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+.ad-slot-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);font-weight:600}
+.ad-slot-note{font-size:10px;color:rgba(138,146,168,.5)}
+/* When AdSense is active, the .ad-slot will auto-fill with real ads */
+
+/* SOS BANNER */
+.sos-banner{margin:0 20px 16px;background:linear-gradient(135deg,rgba(255,107,107,.18),rgba(244,168,192,.1));border:1.5px solid rgba(255,107,107,.35);border-radius:16px;padding:14px 16px;cursor:pointer;transition:transform .15s;position:relative;z-index:2}
+.sos-banner:active{transform:scale(.98)}
+.sos-top{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.sos-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.sos-title{font-size:13px;font-weight:700;color:var(--red)}
+.sos-desc{font-size:11px;color:rgba(238,240,248,.7);line-height:1.5}
+
+/* HERO */
+.home-hero{padding:6px 20px 18px;display:flex;align-items:flex-start;justify-content:space-between;position:relative;z-index:2}
+.home-hero h1{font-family:'Crimson Pro',serif;font-size:27px;font-weight:700;line-height:1.2}
+.home-hero h1 em{color:var(--lavender);font-style:normal}
+.home-hero p{font-size:12px;color:var(--muted);margin-top:5px;max-width:190px;line-height:1.5}
+.moon-wrap{width:64px;height:64px;flex-shrink:0;animation:breathe 4s ease-in-out infinite;display:flex;align-items:center;justify-content:center}
+@keyframes breathe{0%,100%{filter:drop-shadow(0 0 8px rgba(255,233,160,.3))}50%{filter:drop-shadow(0 0 20px rgba(255,233,160,.6));transform:scale(1.07)}}
+.moon-face{font-size:48px}
+
+/* AGE PILLS */
+.age-wrap{margin:0 20px 18px;position:relative;z-index:2}
+.age-label{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--lavender);font-weight:700;margin-bottom:8px}
+.age-pills{display:flex;gap:7px;flex-wrap:wrap}
+.age-pill{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;background:var(--surface);border:1.5px solid rgba(184,166,232,.1);color:var(--muted);cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif}
+.age-pill.active{background:rgba(184,166,232,.18);border-color:rgba(184,166,232,.5);color:var(--lav2)}
+
+/* TIPS */
+.tips-strip{margin:0 20px 18px;background:linear-gradient(135deg,rgba(143,213,184,.1),rgba(184,166,232,.06));border:1px solid rgba(143,213,184,.2);border-radius:14px;padding:12px 14px;position:relative;z-index:2}
+.tips-label{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--mint);font-weight:700;margin-bottom:4px}
+.tips-text{font-size:12px;color:var(--text);line-height:1.55}
+.tips-nav{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.tip-dots{display:flex;gap:4px}
+.tip-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.12)}
+.tip-dot.active{background:var(--mint)}
+.tip-btns{display:flex;gap:6px}
+.tip-btn{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);border:none;color:var(--muted);font-size:11px;cursor:pointer;font-family:'Nunito',sans-serif}
+
+/* SECTION HEADER */
+.sec-hdr{padding:0 20px 10px;display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.sec-hdr h2{font-family:'Crimson Pro',serif;font-size:19px;font-weight:600}
+.sec-hdr a{font-size:12px;color:var(--lavender);text-decoration:none;font-weight:600}
+
+/* TOPIC CARDS */
+.topic-grid{padding:0 20px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:2}
+.topic-card{background:var(--surface);border-radius:16px;padding:14px;border:1px solid rgba(184,166,232,.07);cursor:pointer;transition:transform .15s,border-color .15s;display:flex;gap:12px;align-items:flex-start}
+.topic-card:active{transform:scale(.98);border-color:rgba(184,166,232,.25)}
+.topic-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.topic-body{flex:1}
+.topic-tag{font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;margin-bottom:2px}
+.topic-name{font-family:'Crimson Pro',serif;font-size:15px;font-weight:600;margin-bottom:2px}
+.topic-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.topic-arrow{color:var(--muted2);font-size:14px;align-self:center;flex-shrink:0}
+
+/* ── AFFILIATE PRODUCTS SECTION ── */
+.prods-section{padding:0 20px;position:relative;z-index:2;margin-bottom:4px}
+.prod-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.prod-scroll::-webkit-scrollbar{display:none}
+.prod-card{background:var(--surface);border-radius:14px;padding:12px;border:1px solid rgba(255,255,255,.05);min-width:140px;max-width:140px;flex-shrink:0;cursor:pointer;transition:all .15s;text-decoration:none}
+.prod-card:active{transform:scale(.97);border-color:rgba(245,200,66,.3)}
+.prod-emoji{font-size:26px;margin-bottom:7px;display:block}
+.prod-name{font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;line-height:1.3}
+.prod-price{font-size:11px;color:var(--muted);margin-bottom:6px}
+.prod-btn{background:linear-gradient(135deg,rgba(245,200,66,.25),rgba(245,200,66,.12));border:1px solid rgba(245,200,66,.3);border-radius:8px;padding:5px 10px;font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.05em;text-transform:uppercase;display:block;text-align:center}
+.prod-badge{display:inline-block;background:rgba(255,107,107,.15);border:1px solid rgba(255,107,107,.25);border-radius:10px;padding:1px 7px;font-size:9px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+
+/* PREMIUM BANNER */
+.premium-banner{margin:16px 20px 4px;background:linear-gradient(135deg,rgba(245,200,66,.12),rgba(184,166,232,.1));border:1px solid rgba(245,200,66,.25);border-radius:16px;padding:14px 16px;cursor:pointer;transition:transform .15s;position:relative;z-index:2}
+.premium-banner:active{transform:scale(.98)}
+.prem-top{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.prem-star{font-size:18px}
+.prem-title{font-size:13px;font-weight:700;color:var(--gold)}
+.prem-desc{font-size:11px;color:rgba(238,240,248,.75);line-height:1.5;margin-bottom:9px}
+.prem-btn{background:linear-gradient(135deg,var(--gold),#E8B800);border-radius:10px;padding:8px 16px;font-size:12px;font-weight:700;color:#1a1000;display:inline-block;font-family:'Nunito',sans-serif;border:none;cursor:pointer}
+
+/* BOTTOM NAV */
+.bottom-nav{height:68px;background:var(--deep);border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:stretch;padding:0 6px;position:sticky;bottom:0;z-index:100;flex-shrink:0}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none;font-family:'Nunito',sans-serif}
+.nav-icon{font-size:19px;transition:transform .15s}
+.nav-label{font-size:9px;color:var(--muted);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.nav-item.active .nav-label{color:var(--lavender)}
+.nav-item.active .nav-icon{transform:scale(1.15)}
+
+/* ── DETAIL ── */
+.detail-header{padding:46px 20px 13px;display:flex;align-items:center;gap:12px;background:var(--deep);position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(255,255,255,.04)}
+.back-btn{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;color:var(--text);flex-shrink:0;font-family:'Nunito',sans-serif}
+.detail-title-wrap{flex:1}
+.detail-emoji{font-size:20px;margin-bottom:1px}
+.detail-title{font-family:'Crimson Pro',serif;font-size:17px;font-weight:700}
+.detail-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.detail-body{padding:15px 20px 50px;display:flex;flex-direction:column;gap:16px}
+
+.hero-card{border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center}
+.hero-card-icon{font-size:42px;flex-shrink:0}
+.hero-card h3{font-family:'Crimson Pro',serif;font-size:17px;font-weight:600;margin-bottom:4px}
+.hero-card p{font-size:12px;line-height:1.6;color:var(--lav3)}
+.dsec{display:flex;flex-direction:column;gap:8px}
+.dsec-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--lavender);padding-bottom:4px;border-bottom:1px solid rgba(184,166,232,.1)}
+.iblock{background:var(--surface);border-radius:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.04)}
+.iblock-lbl{font-size:12px;font-weight:700;color:var(--lav2);margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.iblock p{font-size:12px;color:var(--text);line-height:1.6}
+.checklist{display:flex;flex-direction:column;gap:7px}
+.ci{background:var(--surface);border-radius:11px;padding:11px 13px;display:flex;gap:9px;align-items:flex-start;border:1px solid rgba(255,255,255,.04)}
+.cb{width:20px;height:20px;border-radius:6px;background:rgba(143,213,184,.1);border:1.5px solid rgba(143,213,184,.3);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;cursor:pointer;transition:all .15s;margin-top:1px}
+.cb.done{background:rgba(143,213,184,.25);border-color:var(--mint);color:var(--mint)}
+.ct{font-size:12px;line-height:1.5;color:var(--text)}
+.ct.done{color:var(--muted);text-decoration:line-through}
+.age-table{display:flex;flex-direction:column;gap:5px}
+.arow{background:var(--surface);border-radius:11px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,.04)}
+.arow-age{font-size:11px;font-weight:700;color:var(--lavender);min-width:90px}
+.arow-val{font-size:12px;color:var(--text);font-weight:600}
+.arow-note{font-size:10px;color:var(--muted)}
+.method-card{background:var(--surface);border-radius:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.04)}
+.method-name{font-family:'Crimson Pro',serif;font-size:14px;font-weight:600;margin-bottom:3px}
+.mbadge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.method-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.warn-block{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);border-radius:12px;padding:12px 14px}
+.warn-title{font-size:12px;font-weight:700;color:var(--red);margin-bottom:4px}
+.warn-block p{font-size:12px;color:rgba(238,240,248,.8);line-height:1.6}
+.tip-bubble{background:linear-gradient(135deg,rgba(143,213,184,.08),rgba(184,166,232,.05));border:1px solid rgba(143,213,184,.15);border-radius:12px;padding:12px 14px}
+.tip-bubble .tbl{font-size:10px;font-weight:700;color:var(--mint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.tip-bubble p{font-size:12px;color:var(--text);line-height:1.6}
+.steps{display:flex;flex-direction:column;gap:7px}
+.step{display:flex;gap:11px;align-items:flex-start;background:var(--surface);border-radius:12px;padding:11px 13px;border:1px solid rgba(255,255,255,.04)}
+.step-num{width:24px;height:24px;border-radius:50%;background:rgba(184,166,232,.15);border:1px solid rgba(184,166,232,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--lavender);flex-shrink:0}
+.step-body{flex:1}
+.step-title{font-size:12px;font-weight:700;color:var(--lav2);margin-bottom:2px}
+.step-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.cry-grid{display:flex;flex-direction:column;gap:7px}
+.cry-card{background:var(--surface);border-radius:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.04);cursor:pointer}
+.cry-card.expanded{border-color:rgba(184,166,232,.25)}
+.cry-top{display:flex;align-items:center;gap:9px}
+.cry-icon{font-size:20px;width:34px;text-align:center}
+.cry-name{font-size:12px;font-weight:700;color:var(--lav2)}
+.cry-clue{font-size:10px;color:var(--muted);margin-top:1px}
+.cry-arrow{margin-left:auto;color:var(--muted);font-size:11px;transition:transform .2s}
+.cry-card.expanded .cry-arrow{transform:rotate(90deg)}
+.cry-detail{display:none;margin-top:9px;padding-top:9px;border-top:1px solid rgba(255,255,255,.05)}
+.cry-card.expanded .cry-detail{display:block}
+.cry-solution{font-size:12px;color:var(--text);line-height:1.6;margin-bottom:7px}
+.cry-try{font-size:10px;font-weight:700;color:var(--mint);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.cry-try-item{font-size:11px;color:var(--muted);display:flex;gap:5px;margin-bottom:3px}
+
+/* INLINE AD IN DETAIL */
+.inline-ad{background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.07);border-radius:11px;padding:10px;text-align:center;min-height:50px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px}
+.inline-ad-lbl{font-size:9px;color:var(--muted2);letter-spacing:.08em;text-transform:uppercase}
+
+/* AFFILIATE IN DETAIL */
+.detail-prod{background:linear-gradient(135deg,rgba(245,200,66,.07),rgba(184,166,232,.06));border:1px solid rgba(245,200,66,.18);border-radius:13px;padding:13px 14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .15s;text-decoration:none}
+.detail-prod:active{transform:scale(.98)}
+.detail-prod-icon{font-size:28px;flex-shrink:0}
+.detail-prod-info{flex:1}
+.detail-prod-name{font-size:13px;font-weight:700;color:var(--lav2);margin-bottom:2px}
+.detail-prod-desc{font-size:11px;color:var(--muted);line-height:1.4}
+.detail-prod-btn{background:rgba(245,200,66,.2);border:1px solid rgba(245,200,66,.3);border-radius:8px;padding:5px 10px;font-size:10px;font-weight:700;color:var(--gold);flex-shrink:0;font-family:'Nunito',sans-serif;cursor:pointer}
+
+/* SOS SCREEN */
+.sos-screen-body{padding:0 20px 40px;display:flex;flex-direction:column;gap:12px}
+.sos-hero{background:linear-gradient(135deg,rgba(255,107,107,.12),rgba(244,168,192,.06));border:1px solid rgba(255,107,107,.2);border-radius:14px;padding:16px;text-align:center}
+.sos-hero-icon{font-size:44px;margin-bottom:8px}
+.sos-hero h2{font-family:'Crimson Pro',serif;font-size:19px;font-weight:700;color:var(--red);margin-bottom:4px}
+.sos-hero p{font-size:12px;color:var(--text);line-height:1.6}
+.prob-card{background:var(--surface);border-radius:13px;padding:13px 14px;border:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all .15s}
+.prob-card.open{border-color:rgba(184,166,232,.3)}
+.prob-top{display:flex;align-items:center;gap:9px}
+.prob-icon{font-size:19px;width:34px;text-align:center}
+.prob-title{font-size:12px;font-weight:700;color:var(--lav2)}
+.prob-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.prob-arr{margin-left:auto;color:var(--muted);font-size:11px;transition:transform .2s}
+.prob-card.open .prob-arr{transform:rotate(90deg)}
+.prob-body{display:none;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.05)}
+.prob-card.open .prob-body{display:flex;flex-direction:column;gap:7px}
+.sol-step{display:flex;gap:8px;align-items:flex-start}
+.sol-num{width:20px;height:20px;border-radius:50%;background:rgba(184,166,232,.15);border:1px solid rgba(184,166,232,.3);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--lavender);flex-shrink:0;margin-top:1px}
+.sol-text{font-size:12px;color:var(--text);line-height:1.5;flex:1}
+.call-doc{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.2);border-radius:10px;padding:9px 12px;font-size:11px;color:var(--red);font-weight:600;line-height:1.5}
+
+/* TRACKER */
+.tracker-body{padding:0 20px 40px;flex:1}
+.day-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.day-btn{width:32px;height:32px;border-radius:50%;background:var(--surface);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;color:var(--text);font-family:'Nunito',sans-serif}
+.day-lbl{font-family:'Crimson Pro',serif;font-size:17px;font-weight:600}
+.sleep-ring-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
+.sleep-ring{width:130px;height:130px;border-radius:50%;background:conic-gradient(var(--lavender) var(--pct,65%),rgba(255,255,255,.05) 0%);display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:10px}
+.sleep-ring::before{content:'';position:absolute;inset:10px;border-radius:50%;background:var(--night)}
+.ring-inner{position:relative;z-index:1;text-align:center}
+.ring-hrs{font-family:'Crimson Pro',serif;font-size:26px;font-weight:700;color:var(--lav2);display:block}
+.ring-lbl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.07em;text-transform:uppercase}
+.ring-goal{font-size:11px;color:var(--muted)}
+.sleep-log{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.sentry{background:var(--surface);border-radius:12px;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;border:1px solid rgba(255,255,255,.04)}
+.sentry-l{display:flex;align-items:center;gap:9px}
+.sentry-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.sentry-type{font-size:12px;font-weight:600}
+.sentry-time{font-size:10px;color:var(--muted);margin-top:1px}
+.sentry-dur{font-size:13px;font-weight:700;color:var(--lavender)}
+.add-btn{width:100%;padding:13px;border-radius:12px;background:rgba(184,166,232,.07);border:1.5px dashed rgba(184,166,232,.2);color:var(--lavender);font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+
+/* SOUNDS */
+.sounds-body{padding:0 20px 40px}
+.vol-wrap{margin-bottom:14px;background:var(--surface);border-radius:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.04)}
+.vol-lbl{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--lavender);font-weight:700;margin-bottom:8px}
+.vol-row{display:flex;align-items:center;gap:10px}
+.vol-icon{font-size:16px}
+input[type=range]{flex:1;height:4px;border-radius:2px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--lavender) 70%,rgba(255,255,255,.1) 70%);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--lav2);border:2px solid var(--night)}
+.sounds-grid{display:flex;flex-direction:column;gap:8px}
+.scard{background:var(--surface);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;border:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all .15s}
+.scard.playing{border-color:rgba(184,166,232,.4);background:rgba(184,166,232,.07)}
+.scard:active{transform:scale(.98)}
+.scard-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.scard-info{flex:1}
+.scard-name{font-size:13px;font-weight:600;margin-bottom:2px}
+.scard-desc{font-size:11px;color:var(--muted)}
+.play-btn{width:32px;height:32px;border-radius:50%;background:rgba(184,166,232,.12);border:1px solid rgba(184,166,232,.2);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;flex-shrink:0;font-family:'Nunito',sans-serif}
+.scard.playing .play-btn{background:rgba(184,166,232,.28)}
+.wave{display:flex;align-items:center;gap:2px;height:16px}
+.wbar{width:3px;border-radius:2px;background:var(--lavender);animation:wv var(--d,.8s) ease-in-out infinite alternate var(--dly,0s)}
+@keyframes wv{from{height:3px}to{height:13px}}
+
+/* PREMIUM SCREEN */
+.prem-screen-body{padding:0 20px 50px;display:flex;flex-direction:column;gap:14px}
+.prem-hero{background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(184,166,232,.1));border:1px solid rgba(245,200,66,.25);border-radius:16px;padding:20px;text-align:center}
+.prem-hero-icon{font-size:52px;margin-bottom:10px}
+.prem-hero h2{font-family:'Crimson Pro',serif;font-size:22px;font-weight:700;color:var(--gold);margin-bottom:6px}
+.prem-hero p{font-size:13px;color:var(--text);line-height:1.6;margin-bottom:14px}
+.prem-price{font-family:'Crimson Pro',serif;font-size:32px;font-weight:700;color:var(--gold)}
+.prem-price span{font-size:14px;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:400}
+.prem-buy-btn{background:linear-gradient(135deg,var(--gold),#E8B800);border-radius:12px;padding:14px;font-size:15px;font-weight:700;color:#1a1000;display:block;text-align:center;margin-top:12px;cursor:pointer;border:none;font-family:'Nunito',sans-serif;width:100%;transition:all .15s}
+.prem-buy-btn:active{transform:scale(.98)}
+.prem-feature{background:var(--surface);border-radius:13px;padding:13px 15px;display:flex;gap:12px;align-items:flex-start;border:1px solid rgba(255,255,255,.05)}
+.prem-feat-icon{font-size:22px;flex-shrink:0}
+.prem-feat-title{font-size:13px;font-weight:700;color:var(--lav2);margin-bottom:3px}
+.prem-feat-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.prem-products-title{font-family:'Crimson Pro',serif;font-size:18px;font-weight:600;margin:4px 0 2px}
+.prem-products-sub{font-size:12px;color:var(--muted);margin-bottom:8px}
+.aff-card{background:var(--surface);border-radius:13px;padding:13px 14px;display:flex;gap:12px;align-items:center;border:1px solid rgba(255,255,255,.04);margin-bottom:8px;cursor:pointer;transition:all .15s;text-decoration:none}
+.aff-card:active{transform:scale(.98);border-color:rgba(245,200,66,.3)}
+.aff-icon{font-size:28px;flex-shrink:0}
+.aff-info{flex:1}
+.aff-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.aff-desc{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:5px}
+.aff-row{display:flex;align-items:center;justify-content:space-between}
+.aff-price{font-size:12px;font-weight:700;color:var(--gold)}
+.aff-btn{background:rgba(245,200,66,.15);border:1px solid rgba(245,200,66,.3);border-radius:8px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--gold);font-family:'Nunito',sans-serif}
+.aff-commission{font-size:10px;color:var(--mint);margin-top:2px}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface3);border:1px solid rgba(184,166,232,.25);border-radius:24px;padding:9px 18px;font-size:12px;font-weight:600;color:var(--lav2);opacity:0;transition:all .3s;z-index:200;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.bg-lav{background:rgba(184,166,232,.12)}.bg-moon{background:rgba(255,233,160,.12)}.bg-mint{background:rgba(143,213,184,.12)}.bg-blush{background:rgba(244,168,192,.12)}.bg-red{background:rgba(255,107,107,.12)}.bg-gold{background:rgba(245,200,66,.12)}
+.c-lav{color:var(--lavender)}.c-moon{color:var(--moon)}.c-mint{color:var(--mint)}.c-blush{color:var(--blush)}.c-red{color:var(--red)}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:2px}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="stars-bg" id="stars-bg"></div>
+
+<!-- ══ HOME ══ -->
+<div class="screen active" id="screen-home">
+  <div class="topbar">
+    <div class="topbar-logo">LunaRest <span>Baby Sleep Guide</span></div>
+    <div class="topbar-icon">🌙</div>
+  </div>
+
+  <!-- AD SLOT 1 — Replace with your AdSense code -->
+  <div class="ad-slot">
+    <div class="ad-slot-label">Advertisement</div>
+    <div class="ad-slot-note">Your Google AdSense ad appears here</div>
+    <!-- PASTE YOUR ADSENSE CODE HERE AFTER APPROVAL -->
+  </div>
+
+  <div class="home-hero">
+    <div>
+      <h1>Peaceful nights<br>for <em>every</em> family.</h1>
+      <p>Real answers to your baby's sleep problems — free, expert-backed.</p>
+    </div>
+    <div class="moon-wrap"><div class="moon-face">🌛</div></div>
+  </div>
+
+  <div class="sos-banner" onclick="showScreen('screen-sos')">
+    <div class="sos-top"><div class="sos-dot"></div><div class="sos-title">🆘 Baby Won't Sleep Right Now?</div></div>
+    <div class="sos-desc">Tap for instant step-by-step help — most babies settle in 10–20 minutes.</div>
+  </div>
+
+  <div class="age-wrap">
+    <div class="age-label">My baby's age</div>
+    <div class="age-pills">
+      <div class="age-pill active" onclick="setAge(this,0)">Newborn</div>
+      <div class="age-pill" onclick="setAge(this,1)">1–3 mo</div>
+      <div class="age-pill" onclick="setAge(this,2)">4–6 mo</div>
+      <div class="age-pill" onclick="setAge(this,3)">7–12 mo</div>
+      <div class="age-pill" onclick="setAge(this,4)">1–2 yr</div>
+    </div>
+  </div>
+
+  <div class="tips-strip">
+    <div class="tips-label">💡 Quick tip</div>
+    <div class="tips-text" id="tip-text">Loading…</div>
+    <div class="tips-nav">
+      <div class="tip-dots" id="tip-dots"></div>
+      <div class="tip-btns">
+        <button class="tip-btn" onclick="tipMove(-1)">←</button>
+        <button class="tip-btn" onclick="tipMove(1)">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREMIUM BANNER -->
+  <div class="premium-banner" onclick="showScreen('screen-premium')">
+    <div class="prem-top"><div class="prem-star">⭐</div><div class="prem-title">Get the Complete Sleep Plan — $9.99</div></div>
+    <div class="prem-desc">Week-by-week sleep schedules, printable trackers, and a personalised plan for your baby's age.</div>
+    <button class="prem-btn">Get Premium Guide →</button>
+  </div>
+
+  <!-- AFFILIATE PRODUCTS -->
+  <div class="prods-section">
+    <div class="sec-hdr" style="padding:10px 0"><h2>Parents Also Use</h2><a onclick="showScreen('screen-premium')">See all →</a></div>
+    <div class="prod-scroll" id="prod-scroll"></div>
+  </div>
+
+  <div class="sec-hdr" style="margin-top:14px"><h2>Sleep Topics</h2></div>
+  <div class="topic-grid" id="topic-grid"></div>
+  <div style="height:80px"></div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="navTo('home',this)"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+    <button class="nav-item" onclick="navTo('sos',this)"><span class="nav-icon">🆘</span><span class="nav-label">SOS</span></button>
+    <button class="nav-item" onclick="navTo('sounds',this)"><span class="nav-icon">🎵</span><span class="nav-label">Sounds</span></button>
+    <button class="nav-item" onclick="navTo('premium',this)"><span class="nav-icon">⭐</span><span class="nav-label">Premium</span></button>
+  </nav>
+</div>
+
+<!-- ══ DETAIL ══ -->
+<div class="screen" id="screen-detail">
+  <div class="detail-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">←</button>
+    <div class="detail-title-wrap">
+      <div class="detail-emoji" id="d-emoji">🌙</div>
+      <div class="detail-title" id="d-title">Topic</div>
+      <div class="detail-sub" id="d-sub">Guide</div>
+    </div>
+  </div>
+  <div class="detail-body" id="d-body"></div>
+</div>
+
+<!-- ══ SOS ══ -->
+<div class="screen" id="screen-sos">
+  <div class="detail-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">←</button>
+    <div class="detail-title-wrap">
+      <div class="detail-emoji">🆘</div>
+      <div class="detail-title">Emergency Sleep Help</div>
+      <div class="detail-sub">Tap your problem for instant solutions</div>
+    </div>
+  </div>
+  <div class="sos-screen-body">
+    <div class="sos-hero">
+      <div class="sos-hero-icon">😮‍💨</div>
+      <h2>You're not alone.</h2>
+      <p>Every parent faces these moments. Pick your problem and follow the steps — most babies settle within 10–20 minutes.</p>
+    </div>
+    <div id="sos-problems"></div>
+    <!-- AD SLOT 2 -->
+    <div class="ad-slot" style="margin:4px 0">
+      <div class="ad-slot-label">Advertisement</div>
+      <!-- PASTE ADSENSE CODE HERE -->
+    </div>
+  </div>
+</div>
+
+<!-- ══ SOUNDS ══ -->
+<div class="screen" id="screen-sounds">
+  <div class="topbar">
+    <div class="topbar-logo">Sleep Sounds <span>Real audio · tap to play</span></div>
+    <div class="topbar-icon">🎵</div>
+  </div>
+  <div class="sounds-body">
+    <div class="vol-wrap">
+      <div class="vol-lbl">Volume</div>
+      <div class="vol-row">
+        <span class="vol-icon">🔈</span>
+        <input type="range" min="0" max="100" value="70" oninput="setVolume(this.value)">
+        <span class="vol-icon">🔊</span>
+      </div>
+    </div>
+    <div class="sounds-grid" id="sounds-grid"></div>
+    <div style="background:rgba(184,166,232,.05);border-radius:11px;padding:11px 13px;margin-top:10px;font-size:11px;color:var(--muted);line-height:1.6;border:1px solid rgba(184,166,232,.08)">
+      🔊 <strong style="color:var(--lav2)">Real audio generated in your browser.</strong> Keep volume at ~65 dB (like a shower). Place speaker away from baby — never inside the crib.
+    </div>
+    <!-- AD SLOT 3 -->
+    <div class="ad-slot" style="margin:12px 0 0">
+      <div class="ad-slot-label">Advertisement</div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="navTo('home',this)"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+    <button class="nav-item" onclick="navTo('sos',this)"><span class="nav-icon">🆘</span><span class="nav-label">SOS</span></button>
+    <button class="nav-item active" onclick="navTo('sounds',this)"><span class="nav-icon">🎵</span><span class="nav-label">Sounds</span></button>
+    <button class="nav-item" onclick="navTo('premium',this)"><span class="nav-icon">⭐</span><span class="nav-label">Premium</span></button>
+  </nav>
+</div>
+
+<!-- ══ PREMIUM / SHOP ══ -->
+<div class="screen" id="screen-premium">
+  <div class="detail-header">
+    <button class="back-btn" onclick="showScreen('screen-home')">←</button>
+    <div class="detail-title-wrap">
+      <div class="detail-emoji">⭐</div>
+      <div class="detail-title">Premium & Products</div>
+      <div class="detail-sub">Support the app · sleep better tonight</div>
+    </div>
+  </div>
+  <div class="prem-screen-body">
+    <!-- PREMIUM PDF -->
+    <div class="prem-hero">
+      <div class="prem-hero-icon">📘</div>
+      <h2>Complete Baby Sleep Plan</h2>
+      <p>Week-by-week schedules, printable sleep trackers, personalised routines, and a troubleshooting guide for every age from newborn to 2 years.</p>
+      <div class="prem-price">$9.99 <span>one-time</span></div>
+      <!-- Replace href with your Gumroad link -->
+      <button class="prem-buy-btn" onclick="showToast('Redirecting to checkout…');setTimeout(()=>window.open('https://gumroad.com','_blank'),800)">Buy Complete Sleep Plan →</button>
+    </div>
+
+    <!-- WHAT'S INCLUDED -->
+    <div class="prem-feature"><div class="prem-feat-icon">📅</div><div><div class="prem-feat-title">Week-by-week schedules</div><div class="prem-feat-desc">Exact nap & bedtime schedules from newborn through 24 months, with sample daily routines.</div></div></div>
+    <div class="prem-feature"><div class="prem-feat-icon">🖨️</div><div><div class="prem-feat-title">Printable sleep trackers</div><div class="prem-feat-desc">Fill-in daily log sheets to track naps, night feeds, and total sleep time.</div></div></div>
+    <div class="prem-feature"><div class="prem-feat-icon">🔧</div><div><div class="prem-feat-title">Troubleshooting guide</div><div class="prem-feat-desc">Decision tree for every common sleep problem — find your exact situation and fix it.</div></div></div>
+    <div class="prem-feature"><div class="prem-feat-icon">🌙</div><div><div class="prem-feat-title">Bedtime routine planner</div><div class="prem-feat-desc">Customisable routine builder with timing, steps, and notes for your baby.</div></div></div>
+
+    <!-- AFFILIATE PRODUCTS -->
+    <div class="prem-products-title">Recommended Products</div>
+    <div class="prem-products-sub">Products we recommend — affiliate links help support this free app.</div>
+    <div id="aff-list"></div>
+
+    <!-- AD SLOT 4 -->
+    <div class="ad-slot">
+      <div class="ad-slot-label">Advertisement</div>
+    </div>
+  </div>
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="navTo('home',this)"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></button>
+    <button class="nav-item" onclick="navTo('sos',this)"><span class="nav-icon">🆘</span><span class="nav-label">SOS</span></button>
+    <button class="nav-item" onclick="navTo('sounds',this)"><span class="nav-icon">🎵</span><span class="nav-label">Sounds</span></button>
+    <button class="nav-item active" onclick="navTo('premium',this)"><span class="nav-icon">⭐</span><span class="nav-label">Premium</span></button>
+  </nav>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STARS ──
+(()=>{const b=document.getElementById('stars-bg');for(let i=0;i<35;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*2+1;s.style.cssText=`width:${z}px;height:${z}px;top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;b.appendChild(s)}})();
+
+// ── TIPS ──
+const TIPS=["Newborns need 14–17 hrs/day in 2–3 hour stretches. Waking every 2–3 hrs to feed is completely normal — their stomachs hold only 1–2 oz.","The safest sleep position is always BACK, on a firm flat surface, alone. This reduces SIDS risk by up to 50%.","White noise at 60–65 dB mimics the womb and helps babies fall asleep faster and stay asleep longer.","A consistent bedtime routine — even just 15 minutes of bath → feed → song → sleep — trains the brain to wind down.","Watch for sleepy cues: eye rubbing, yawning, staring. Put baby down at the FIRST cue, before overtired.","Drowsy but awake: placing baby in the crib before fully asleep teaches self-settling — the key to sleeping through.","Sleep regressions at 4, 8–10, and 12 months are normal. They last 2–6 weeks. Keep your routine consistent.","Overtired babies are HARDER to settle. Wake windows: newborns only stay awake 45–60 mins before needing sleep.","Room temp 68–72°F (20–22°C) is ideal. Dress baby in one layer more than you'd wear. Overheating is a SIDS risk.","The dream feed at 10–11 PM can extend baby's first night stretch by 3–4 hours. Try it from weeks 4–16."];
+let tipIdx=0,ageIdx=0;
+const AGE_TIPS=[[0,1,2,4,8],[0,2,3,5,9],[2,3,5,6,7],[5,6,7,8],[6,7,8,9]];
+function renderTips(){const pool=AGE_TIPS[ageIdx];document.getElementById('tip-text').textContent=TIPS[pool[tipIdx%pool.length]];const dots=document.getElementById('tip-dots');dots.innerHTML=pool.map((_,i)=>`<div class="tip-dot${i===tipIdx%pool.length?' active':''}"></div>`).join('')}
+function tipMove(d){tipIdx=(tipIdx+d+10)%10;renderTips()}
+function setAge(el,idx){document.querySelectorAll('.age-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');ageIdx=idx;tipIdx=0;renderTips()}
+renderTips();
+
+// ── AFFILIATE PRODUCTS ──
+const PRODUCTS=[
+  {icon:'🔊',name:'Hatch Rest Sound Machine',desc:'#1 rated white noise machine. Grows with baby from newborn to toddler.',price:'$69.99',commission:'You earn ~$4.20',link:'https://amazon.com',badge:null},
+  {icon:'🌑',name:'Blackout Curtains',desc:'Portable suction-cup blackout blinds — works in any room or hotel.',price:'$35.99',commission:'You earn ~$2.16',link:'https://amazon.com',badge:'Best Value'},
+  {icon:'👶',name:'Nested Bean Sleep Sack',desc:'Gently weighted sleep sack that mimics parent\'s touch. Reduces night waking.',price:'$34.99',commission:'You earn ~$2.10',link:'https://amazon.com',badge:null},
+  {icon:'📡',name:'Owlet Baby Monitor',desc:'Tracks heart rate and oxygen levels while baby sleeps. Peace of mind.',price:'$299.00',commission:'You earn ~$17.94',link:'https://amazon.com',badge:'Top Pick'},
+  {icon:'🛏️',name:'Snoo Smart Bassinet',desc:'Automatically soothes baby back to sleep. Used by millions of families.',price:'$1,695',commission:'You earn ~$101',link:'https://amazon.com',badge:'💰 High Earn'},
+  {icon:'🌡️',name:'Braun Baby Thermometer',desc:'Accurate forehead thermometer — essential for sick baby nights.',price:'$49.99',commission:'You earn ~$3.00',link:'https://amazon.com',badge:null},
+  {icon:'🫁',name:'FridaBaby NoseFrida',desc:'Clears congestion so baby can breathe and sleep. Parents swear by it.',price:'$21.99',commission:'You earn ~$1.32',link:'https://amazon.com',badge:null},
+  {icon:'🧸',name:'SNUGGLE ME Organic',desc:'Soft organic lounger for supervised awake time. Not for unsupervised sleep.',price:'$79.99',commission:'You earn ~$4.80',link:'https://amazon.com',badge:null},
+];
+
+// Horizontal scroll cards on home
+document.getElementById('prod-scroll').innerHTML=PRODUCTS.slice(0,5).map(p=>`
+  <a class="prod-card" href="${p.link}" target="_blank" onclick="showToast('Opening Amazon…')">
+    ${p.badge?`<div class="prod-badge">${p.badge}</div>`:''}
+    <span class="prod-emoji">${p.icon}</span>
+    <div class="prod-name">${p.name}</div>
+    <div class="prod-price">${p.price}</div>
+    <div class="prod-btn">View →</div>
+  </a>`).join('');
+
+// Full list on premium screen
+document.getElementById('aff-list').innerHTML=PRODUCTS.map(p=>`
+  <a class="aff-card" href="${p.link}" target="_blank" onclick="showToast('Opening Amazon…')">
+    <div class="aff-icon">${p.icon}</div>
+    <div class="aff-info">
+      <div class="aff-name">${p.name}</div>
+      <div class="aff-desc">${p.desc}</div>
+      <div class="aff-row"><div class="aff-price">${p.price}</div><div class="aff-btn">Buy on Amazon</div></div>
+      <div class="aff-commission">💚 ${p.commission} (Amazon Associates)</div>
+    </div>
+  </a>`).join('');
+
+// ── TOPICS ──
+const TOPICS=[
+  {id:'safe',emoji:'🛡️',name:'Safe Sleep & SIDS Prevention',tag:'Safety',tc:'c-blush',bg:'bg-blush',desc:'ABCDE rules, safe environment & what to never use',
+   hero:{bg:'linear-gradient(135deg,rgba(244,168,192,.15),rgba(184,166,232,.08))',title:'Safe Sleep Basics',desc:'The rules every parent must follow from day one.'},
+   sections:[
+     {t:'The Safe Sleep ABCs',c:[{type:'checklist',items:['A — Alone: baby sleeps alone, not with adults or siblings','B — Back: always on back, never tummy or side','C — Crib: firm flat mattress in approved crib or bassinet','D — Don\'t overheat: 68–72°F, light layers only','E — Empty: no pillows, blankets, bumpers, or toys']}]},
+     {t:'Room Sharing vs Bed Sharing',c:[
+       {type:'block',icon:'🛏️',lbl:'Room sharing — recommended for 6–12 months',text:'Baby in their own sleep space in your room reduces SIDS risk by 50% and makes night feeds much easier.'},
+       {type:'warn',title:'⚠️ Bed sharing raises risk',text:'Bed sharing raises accidental suffocation risk, especially when a parent is exhausted, has consumed alcohol, or takes sedating medication. If you fall asleep feeding, move baby immediately.'},
+     ]},
+     {t:'Never Use These',c:[{type:'checklist',items:['Sleep positioners or wedges','Inclined sleepers (recalled by CPSC)','Bumper pads of any kind','Loose blankets, duvets, pillows','Car seat for sleep outside the car']}]},
+     {t:'Recommended Products',c:[{type:'affprod',idx:0},{type:'affprod',idx:1}]},
+   ]
+  },
+  {id:'schedules',emoji:'⏰',name:'Sleep Schedules by Age',tag:'Routines',tc:'c-lav',bg:'bg-lav',desc:'How much sleep at every age & building a daily routine',
+   hero:{bg:'linear-gradient(135deg,rgba(184,166,232,.15),rgba(143,213,184,.06))',title:'Sleep by Age',desc:'Sleep needs change fast. Here\'s exactly what to expect.'},
+   sections:[
+     {t:'Total Sleep Needs',c:[{type:'agetable',rows:[{a:'Newborn',v:'14–17 hrs/day',n:'Every 2–4 hrs'},{a:'4–6 months',v:'12–16 hrs/day',n:'2–3 naps'},{a:'7–9 months',v:'12–15 hrs/day',n:'2 naps'},{a:'10–12 months',v:'12–14 hrs/day',n:'1–2 naps'},{a:'1–2 years',v:'11–14 hrs/day',n:'1 nap'},{a:'2–3 years',v:'10–13 hrs/day',n:'1 nap or none'}]}]},
+     {t:'Wake Windows',c:[{type:'agetable',rows:[{a:'0–4 weeks',v:'45–60 min',n:''},{a:'1–2 months',v:'60–90 min',n:''},{a:'3–4 months',v:'1.5–2 hrs',n:''},{a:'5–6 months',v:'2–2.5 hrs',n:''},{a:'7–9 months',v:'2.5–3.5 hrs',n:''},{a:'10–12 months',v:'3–4 hrs',n:''}]}]},
+     {t:'Bedtime Routine Steps',c:[{type:'steps',steps:[{n:'1',t:'Dim all lights 30–45 mins before bed',d:'Melatonin only releases in darkness. Screens off.'},{n:'2',t:'Warm bath (optional)',d:'Drops core temperature afterward, triggering sleep drive.'},{n:'3',t:'Feed in a lit room',d:'Before the dark wind-down — breaks feed-to-sleep habit.'},{n:'4',t:'Song or story in nursery',d:'Same 1–2 songs every night become the strongest sleep cue.'},{n:'5',t:'Drowsy but awake into crib',d:'The key skill for sleeping through the night.'}]}]},
+     {t:'Tip',c:[{type:'tip',text:'The last wake window before bed is the LONGEST. Too early = won\'t settle. Too late = overtired meltdown. Watch for first yawn.'}]},
+   ]
+  },
+  {id:'cry',emoji:'😢',name:'Baby Cry Decoder',tag:'Understanding',tc:'c-moon',bg:'bg-moon',desc:'What each cry means & exactly how to respond',
+   hero:{bg:'linear-gradient(135deg,rgba(255,233,160,.12),rgba(184,166,232,.08))',title:'Understanding Cries',desc:'Babies have different cries for different needs. Learning them is the most powerful parenting skill.'},
+   sections:[
+     {t:'Types of Cries — Tap to Expand',c:[{type:'cries',items:[
+       {icon:'🍼',name:'Hunger cry',clue:'Rhythmic, repetitive, builds gradually. Rooting or sucking hand.',sol:'Feed immediately. Crying is a LATE hunger cue — try to feed before it starts.',tries:['Check time since last feed','Offer breast or bottle right away','If recently fed, offer 5 more mins — growth spurts increase hunger']},
+       {icon:'😴',name:'Tired/overtired cry',clue:'Whiny, builds to screaming. Eye rubbing, staring blankly.',sol:'Overtired babies cry harder and are harder to settle. Act on EARLY cues.',tries:['Reduce stimulation immediately — dim and quiet','Use your usual settling method right away','Brief rocking then into crib drowsy but awake']},
+       {icon:'💨',name:'Gas/wind cry',clue:'Sharp, high-pitched. Knees pulled up. Hard tummy. After feeds.',sol:'Wind thoroughly after every feed — upright for 15–20 mins.',tries:['Upright over shoulder — pat and rub back 5 mins','Bicycle legs while lying on back','Gentle clockwise tummy massage','Gripe water or simethicone drops']},
+       {icon:'🤗',name:'Needs comfort cry',clue:'Whimpery, not urgent. Settles when held. Restarts when put down.',sol:'This is not manipulation — babies have a genuine need for closeness.',tries:['Skin-to-skin contact','Baby carrier for hands-free comfort','Gentle shushing close to baby\'s ear']},
+       {icon:'🌡️',name:'Pain or illness cry',clue:'Sudden high-pitched shriek. Inconsolable. Different from usual.',sol:'Unusual or inconsolable crying always warrants checking for illness or injury.',tries:['Check temperature — fever needs medical attention','Look for hair tourniquet on fingers, toes','Check for redness or tender spots','Inconsolable + unwell = call doctor']},
+     ]}]},
+   ]
+  },
+  {id:'training',emoji:'🌟',name:'Sleep Training Methods',tag:'Training',tc:'c-moon',bg:'bg-moon',desc:'Ferber, CIO, no-tears & more — honestly explained',
+   hero:{bg:'linear-gradient(135deg,rgba(255,233,160,.12),rgba(184,166,232,.08))',title:'Sleep Training',desc:'No single right method. Choose what fits your baby and family.'},
+   sections:[
+     {t:'Minimum Age: 4–6 Months',c:[{type:'block',icon:'📅',lbl:'Why to wait',text:'Before 4 months, night waking is biologically normal and feeds are nutritionally needed. Sleep training before this age is unlikely to work and causes unnecessary stress.'}]},
+     {t:'Methods',c:[{type:'methods',methods:[
+       {name:'Ferber — Graduated Extinction',badge:'Moderate',bc:'bg-moon',bl:'c-moon',desc:'Check in at increasing intervals (3→5→10→15 mins) without picking up. Results in 3–7 nights. Most popular method worldwide.'},
+       {name:'Cry It Out (Extinction)',badge:'Intensive',bc:'bg-blush',bl:'c-blush',desc:'Put down awake, do not return until morning. Fast (2–5 nights). Research shows no long-term harm when done at appropriate age.'},
+       {name:'Chair Method',badge:'Gradual',bc:'bg-mint',bl:'c-mint',desc:'Sit next to crib until asleep. Move chair further every 3 nights. Takes 2–3 weeks but very little crying.'},
+       {name:'No-Cry / Fading',badge:'Gentlest',bc:'bg-lav',bl:'c-lav',desc:'Gradually reduce support each night. Takes 4–8 weeks. Minimal protest. Best for breastfed babies or anxious parents.'},
+     ]}]},
+     {t:'When NOT to Sleep Train',c:[{type:'warn',title:'⚠️ Pause during:',text:'Illness · Acute teething · House move · New sibling · Any major life change. Wait 2 weeks after things stabilise before starting.'}]},
+   ]
+  },
+  {id:'regressions',emoji:'🔄',name:'Sleep Regressions',tag:'Development',tc:'c-mint',bg:'bg-mint',desc:'4-month, 8-month, 12-month & toddler regressions',
+   hero:{bg:'linear-gradient(135deg,rgba(143,213,184,.12),rgba(184,166,232,.08))',title:'Sleep Regressions',desc:'Your baby was sleeping well — then suddenly stopped. Normal development. Here\'s how to survive.'},
+   sections:[
+     {t:'What is a Sleep Regression?',c:[{type:'block',icon:'🧠',lbl:'Brain growth at work',text:'Regressions happen when developmental leaps change how baby\'s brain processes sleep. A sign of healthy growth — not a step backwards. They last 2–6 weeks.'}]},
+     {t:'The Major Regressions',c:[
+       {type:'block',icon:'4️⃣',lbl:'4-Month — The Biggest One',text:'Baby\'s sleep permanently shifts to adult-like 4-stage cycles. They now wake between cycles. This change is permanent — but babies CAN learn to self-settle through it.'},
+       {type:'block',icon:'8️⃣',lbl:'8–10 Month Regression',text:'Crawling, pulling up, early language, peak separation anxiety. Many babies stand in the crib and can\'t get back down. Practise lying down from standing during the day.'},
+       {type:'block',icon:'🔢',lbl:'12-Month & 18-Month',text:'Walking onset, 2→1 nap transition, language explosion. Toddlers begin testing bedtime limits. Consistent calm boundaries work best.'},
+     ]},
+     {t:'Survival Plan',c:[{type:'checklist',items:['Keep bedtime routine IDENTICAL — predictability is comfort','Offer extra daytime feeds for hunger-driven waking','Accept temporarily shorter nights without creating new props','Do NOT start new habits (driving to sleep) you\'ll need to undo','Tag-team night duty so both parents get rest','Regressions ALWAYS end — usually within 2–6 weeks']}]},
+   ]
+  },
+  {id:'colic',emoji:'😭',name:'Colic & Unsettled Babies',tag:'Colic',tc:'c-red',bg:'bg-red',desc:'What colic is, why it happens & how to cope',
+   hero:{bg:'linear-gradient(135deg,rgba(255,107,107,.12),rgba(184,166,232,.08))',title:'Colic',desc:'Affects 1 in 5 babies. You are not doing anything wrong. Here\'s what helps.'},
+   sections:[
+     {t:'What is Colic?',c:[
+       {type:'block',icon:'📋',lbl:'Definition',text:'Crying 3+ hours/day, 3+ days/week, in a baby under 3 months with no medical cause. Peaks at 6 weeks, resolves by 3–4 months. Cause is unknown — linked to gut immaturity.'},
+       {type:'block',icon:'🕐',lbl:'The witching hour',text:'Most colicky crying peaks 4–10 PM. Gut motility increases in the evening and the immature nervous system struggles to self-regulate after a full day of stimulation.'},
+     ]},
+     {t:'The 5 S\'s — Try in Order',c:[{type:'steps',steps:[{n:'1',t:'Swaddle',d:'Firm swaddle with arms in. Mimics the snug feeling of the womb.'},{n:'2',t:'Side or Stomach hold',d:'Hold baby on their side or tummy across your arm. Never put to sleep this way.'},{n:'3',t:'Shush',d:'Loud, continuous "shhhh" directly near baby\'s ear. As loud as their crying.'},{n:'4',t:'Swing',d:'Fast, small jiggly motion. Support the head. Motion calms the vestibular system.'},{n:'5',t:'Suck',d:'Offer dummy, finger, or breast. Sucking is deeply calming for babies.'}]}]},
+     {t:'Parent Wellbeing',c:[
+       {type:'tip',text:'Put baby down safely in their crib and take a 5-minute break if you feel overwhelmed. A crying baby in a safe place is safer than a parent at breaking point. Shaken baby syndrome happens from desperation — never from bad parenting.'},
+       {type:'warn',title:'⚠️ Call doctor if:',text:'Crying is high-pitched or suddenly different · Fever over 100.4°F · Not gaining weight · Blood in stool · Severe arching during/after feeds · You feel you may harm your baby.'},
+     ]},
+   ]
+  },
+  {id:'env',emoji:'🌙',name:'Sleep Environment Setup',tag:'Setup',tc:'c-moon',bg:'bg-moon',desc:'Darkness, temperature, white noise & crib setup',
+   hero:{bg:'linear-gradient(135deg,rgba(255,233,160,.12),rgba(28,35,64,.9))',title:'Perfect Sleep Environment',desc:'The right setup cuts settle time in half and extends sleep stretches.'},
+   sections:[
+     {t:'The 4 Key Elements',c:[
+       {type:'block',icon:'🌑',lbl:'1. Pitch darkness',text:'Light suppresses melatonin. Blackout blinds are one of the best purchases for baby sleep. Even LED standby lights can disrupt sleep.'},
+       {type:'block',icon:'🌡️',lbl:'2. Temperature: 68–72°F',text:'Overheating is a SIDS risk factor. Use a room thermometer. One extra layer compared to what you\'d wear.'},
+       {type:'block',icon:'🔊',lbl:'3. White noise: 60–65 dB',text:'Masks household sounds that cause startle waking. Place 7+ feet from crib. Never inside crib. Use a dedicated machine.'},
+       {type:'block',icon:'👶',lbl:'4. Consistent sleep space',text:'Familiarity = safety cue = faster settling. Same spot every nap and night if possible.'},
+     ]},
+     {t:'Recommended Products',c:[{type:'affprod',idx:0},{type:'affprod',idx:1},{type:'affprod',idx:2}]},
+   ]
+  },
+  {id:'feeding',emoji:'🍼',name:'Feeding & Night Waking',tag:'Feeding',tc:'c-blush',bg:'bg-blush',desc:'Night feeds by age, dream feeds & breaking associations',
+   hero:{bg:'linear-gradient(135deg,rgba(244,168,192,.15),rgba(184,166,232,.08))',title:'Feeding & Sleep',desc:'Understanding the feeding-sleep connection is often the key to longer nights.'},
+   sections:[
+     {t:'Night Feeds by Age',c:[{type:'agetable',rows:[{a:'0–2 months',v:'Every 2–3 hrs',n:'Always feed on demand'},{a:'3–4 months',v:'2–3 feeds',n:'Some go 4–5 hr stretches'},{a:'4–6 months',v:'1–2 feeds',n:'Some ready to night wean'},{a:'6–9 months',v:'0–1 feeds',n:'Most can go 11–12 hrs'},{a:'9–12 months',v:'Not nutritionally needed',n:'If waking, often habitual'}]}]},
+     {t:'Breaking the Feed-to-Sleep Habit',c:[{type:'steps',steps:[{n:'1',t:'Move feeding to start of routine',d:'Feed → bath → song → sleep. Not bath → song → feed → sleep.'},{n:'2',t:'Feed in a different room',d:'Feed in the living room, then carry to nursery for the wind-down.'},{n:'3',t:'Keep baby slightly awake',d:'Tickle feet, talk quietly, change nappy after feed to rouse slightly.'},{n:'4',t:'Be patient — 1–2 weeks',d:'The association took months to form. Breaking it takes consistent weeks.'}]}]},
+     {t:'The Dream Feed',c:[{type:'block',icon:'💤',lbl:'What it is & when to use it',text:'A feed at 10–11 PM while baby is still asleep. Tops up calories to extend the first stretch to 4–5 AM. Works well from weeks 4–16, then drop it by 6–9 months by pushing it 15 minutes earlier each week.'}]},
+   ]
+  },
+];
+
+function renderTopics(){
+  document.getElementById('topic-grid').innerHTML=TOPICS.map(t=>`
+    <div class="topic-card" onclick="openTopic('${t.id}')">
+      <div class="topic-icon ${t.bg}">${t.emoji}</div>
+      <div class="topic-body">
+        <div class="topic-tag ${t.tc}">${t.tag}</div>
+        <div class="topic-name">${t.name}</div>
+        <div class="topic-desc">${t.desc}</div>
+      </div>
+      <div class="topic-arrow">›</div>
+    </div>`).join('');
+}
+renderTopics();
+
+function openTopic(id){
+  const t=TOPICS.find(x=>x.id===id);
+  document.getElementById('d-emoji').textContent=t.emoji;
+  document.getElementById('d-title').textContent=t.name;
+  document.getElementById('d-sub').textContent=t.tag+' Guide';
+  let html=`<div class="hero-card" style="background:${t.hero.bg}"><div class="hero-card-icon">${t.emoji}</div><div><h3>${t.hero.title}</h3><p>${t.hero.desc}</p></div></div>`;
+  // inline ad after hero
+  html+=`<div class="inline-ad"><div class="inline-ad-lbl">Advertisement — paste AdSense here</div></div>`;
+  t.sections.forEach(sec=>{
+    html+=`<div class="dsec"><div class="dsec-title">${sec.t}</div>`;
+    sec.c.forEach(item=>{
+      if(item.type==='block') html+=`<div class="iblock"><div class="iblock-lbl">${item.icon} ${item.lbl}</div><p>${item.text}</p></div>`;
+      else if(item.type==='checklist') html+=`<div class="checklist">${item.items.map(ci=>`<div class="ci"><div class="cb" onclick="toggleCb(this)"></div><div class="ct">${ci}</div></div>`).join('')}</div>`;
+      else if(item.type==='agetable') html+=`<div class="age-table">${item.rows.map(r=>`<div class="arow"><div class="arow-age">${r.a}</div><div><div class="arow-val">${r.v}</div>${r.n?`<div class="arow-note">${r.n}</div>`:''}</div></div>`).join('')}</div>`;
+      else if(item.type==='methods') html+=item.methods.map(m=>`<div class="method-card"><div class="method-name">${m.name}</div><div class="mbadge ${m.bc} ${m.bl}">${m.badge}</div><div class="method-desc">${m.desc}</div></div>`).join('');
+      else if(item.type==='warn') html+=`<div class="warn-block"><div class="warn-title">${item.title}</div><p>${item.text}</p></div>`;
+      else if(item.type==='tip') html+=`<div class="tip-bubble"><div class="tbl">💡 Tip</div><p>${item.text}</p></div>`;
+      else if(item.type==='steps') html+=`<div class="steps">${item.steps.map(s=>`<div class="step"><div class="step-num">${s.n}</div><div class="step-body"><div class="step-title">${s.t}</div><div class="step-desc">${s.d}</div></div></div>`).join('')}</div>`;
+      else if(item.type==='cries') html+=`<div class="cry-grid">${item.items.map(c=>`<div class="cry-card" onclick="this.classList.toggle('expanded')"><div class="cry-top"><div class="cry-icon">${c.icon}</div><div><div class="cry-name">${c.name}</div><div class="cry-clue">${c.clue}</div></div><div class="cry-arrow">›</div></div><div class="cry-detail"><div class="cry-solution">${c.sol}</div><div class="cry-try">Try this:</div>${c.tries.map(t=>`<div class="cry-try-item"><span>→</span><span>${t}</span></div>`).join('')}</div></div>`).join('')}</div>`;
+      else if(item.type==='affprod'){const p=PRODUCTS[item.idx];html+=`<a class="detail-prod" href="${p.link}" target="_blank" onclick="showToast('Opening Amazon…')"><div class="detail-prod-icon">${p.icon}</div><div class="detail-prod-info"><div class="detail-prod-name">${p.name}</div><div class="detail-prod-desc">${p.desc}</div></div><div class="detail-prod-btn">${p.price} →</div></a>`;}
+    });
+    html+='</div>';
+  });
+  document.getElementById('d-body').innerHTML=html;
+  showScreen('screen-detail');
+}
+function toggleCb(el){el.classList.toggle('done');el.textContent=el.classList.contains('done')?'✓':'';el.nextElementSibling.classList.toggle('done',el.classList.contains('done'))}
+
+// ── SOS ──
+const SOS=[
+  {icon:'😴',title:'Baby won\'t fall asleep at bedtime',sub:'Awake 30+ minutes in the crib',steps:['Check wake window — may be undertired (too early) or overtired (too late)','Ensure room is pitch dark and white noise is running','Re-do the last 5 mins of your routine to reset the wind-down signal','Place in crib drowsy but awake — leave for 5 mins before intervening','If still awake after 20 mins, brief resettle and try again in 10 mins'],doc:null},
+  {icon:'🌙',title:'Waking every 1–2 hours all night',sub:'Happening several nights in a row',steps:['Offer a feed at first wake to check if hunger-driven','Check for feed-to-sleep association — do they need a feed to go back to sleep?','Try a dream feed at 10–11 PM to extend the first stretch','Look for overtiredness — was last nap too short or too early?','If over 4 months and well-fed, consider sleep training to break the cycle'],doc:null},
+  {icon:'😭',title:'Baby crying inconsolably right now',sub:'Won\'t stop no matter what',steps:['Check HALT: Hungry? Angry/gassy? Lonely? Tired?','Try the 5 S\'s: Swaddle → Side hold → Loud shush → Swing → Suck','Check for hair tourniquet on fingers, toes, or genitals','Check temperature — fever over 100.4°F needs medical attention','Take a 5-min break if overwhelmed — put baby safely in crib and step away'],doc:'Inconsolable crying + unwell symptoms — call your doctor immediately'},
+  {icon:'⏰',title:'Early waking before 5:30 AM',sub:'Baby treats 4–5 AM as morning',steps:['Check for light — even a crack at 4 AM wakes babies. Add blackout.','Ensure white noise masks early morning sounds (birds, traffic)','Try pushing bedtime 15–30 mins LATER (counterintuitive but often works)','Check last nap timing — ending too late shifts the whole schedule','If 4 AM wake is followed by happy awake time, this IS their morning — adjust schedule'],doc:null},
+  {icon:'🛏️',title:'Baby only sleeps when held',sub:'Wakes every time I put them down',steps:['Wait longer before transfer — baby must be in deep sleep (limp limbs, no eye movement)','Warm the mattress with a heat pad, remove before placing baby','Transfer bottom-first, keeping head supported until the last second','Keep one hand on baby\'s chest for 60 seconds after placing','White noise close to the sleep surface helps maintain sleep','Under 8 weeks: contact naps are developmentally normal — use a carrier'],doc:null},
+  {icon:'🔄',title:'Sleep regression — was sleeping, now isn\'t',sub:'Suddenly waking more or refusing sleep',steps:['Confirm it\'s not hunger — offer extra feeds for 3 days first','Keep bedtime routine IDENTICAL — predictability helps regressions pass faster','Avoid creating new sleep props (rocking, bedsharing) in desperation','Practise new motor skills (rolling, pulling up) extensively during the day','Respond to night wakes with minimal stimulation','Remind yourself: regressions last 2–6 weeks — this is NOT your new normal'],doc:null},
+  {icon:'✈️',title:'Travel / jet lag sleep disaster',sub:'Schedule completely off',steps:['Commit fully to local time — don\'t maintain home time','Get maximum outdoor light during local daytime to reset the clock','Cap naps at normal length even if baby is exhausted','Stick to your bedtime routine even in unfamiliar rooms','Allow 1 day per time zone crossed for full adjustment'],doc:null},
+  {icon:'💊',title:'Sick or teething — won\'t settle',sub:'Baby in pain or unwell',steps:['Offer infant paracetamol or ibuprofen (6m+) 30 mins before bed if in pain','Earlier bedtime prevents overtiredness on top of discomfort','Offer extra comfort without creating permanent new habits if possible','Keep room slightly cooler and ensure plenty of fluids','After illness, return to normal routine within 1–2 nights — be firm but gentle'],doc:'Fever over 100.4°F in a baby under 3 months — seek medical care immediately'},
+];
+document.getElementById('sos-problems').innerHTML=SOS.map(p=>`
+  <div class="prob-card" onclick="this.classList.toggle('open')">
+    <div class="prob-top"><div class="prob-icon">${p.icon}</div><div><div class="prob-title">${p.title}</div><div class="prob-sub">${p.sub}</div></div><div class="prob-arr">›</div></div>
+    <div class="prob-body">
+      ${p.steps.map((s,j)=>`<div class="sol-step"><div class="sol-num">${j+1}</div><div class="sol-text">${s}</div></div>`).join('')}
+      ${p.doc?`<div class="call-doc">🏥 ${p.doc}</div>`:''}
+    </div>
+  </div>`).join('');
+
+// ── REAL AUDIO ──
+let audioCtx=null,currentSource=null,gainNode=null,currentSoundIdx=null;
+function getCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+function makeWhiteNoise(ctx){const buf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return{src}}
+function makePinkNoise(ctx){const buf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);const d=buf.getChannelData(0);let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0;for(let i=0;i<d.length;i++){const w=Math.random()*2-1;b0=.99886*b0+w*.0555179;b1=.99332*b1+w*.0750759;b2=.96900*b2+w*.1538520;b3=.86650*b3+w*.3104856;b4=.55000*b4+w*.5329522;b5=-.7616*b5-w*.0168980;d[i]=(b0+b1+b2+b3+b4+b5+w*.5362)*0.11}const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return{src}}
+function makeOcean(ctx){const buf=ctx.createBuffer(1,ctx.sampleRate*4,ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++){const t=i/ctx.sampleRate;d[i]=(Math.random()*2-1)*0.5*(0.5+0.5*Math.sin(2*Math.PI*.15*t))*(0.5+0.3*Math.sin(2*Math.PI*.07*t+1))}const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return{src}}
+function makeHeartbeat(ctx){const buf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++){const t=i/ctx.sampleRate;const beat=t%0.9;if(beat<.06)d[i]=Math.sin(2*Math.PI*40*beat/.06)*Math.exp(-beat/.03)*.8;else if(beat>.09&&beat<.15)d[i]=Math.sin(2*Math.PI*35*(beat-.09)/.06)*Math.exp(-(beat-.09)/.025)*.6;else d[i]=0}const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return{src}}
+function makeRain(ctx){const buf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++){d[i]=(Math.random()*2-1)*.3;if(Math.random()<.003)d[i]+=(Math.random()*2-1)*.5}const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return{src}}
+function makeShush(ctx){const buf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++){const t=i/ctx.sampleRate;d[i]=(Math.random()*2-1)*.4*(0.7+0.3*Math.sin(2*Math.PI*3*t))}const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;const f=ctx.createBiquadFilter();f.type='bandpass';f.frequency.value=2500;f.Q.value=0.5;src.connect(f);return{src,node:f}}
+function makeFan(ctx){const buf=ctx.createBuffer(1,ctx.sampleRate*2,ctx.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*.2;const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;const f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=350;src.connect(f);return{src,node:f}}
+function makeLullaby(ctx){const notes=[261,293,329,349,392,440];const dur=.5;const tl=ctx.sampleRate*8;const buf=ctx.createBuffer(1,tl,ctx.sampleRate);const d=buf.getChannelData(0);[0,2,4,2,0,2,4,5,4,2,0,2,1,0].forEach((ni,i)=>{const freq=notes[ni%notes.length];const start=Math.floor(i*dur*ctx.sampleRate);for(let j=0;j<dur*ctx.sampleRate&&start+j<tl;j++){const env=Math.min(j/(.05*ctx.sampleRate),1)*Math.exp(-j/(.4*ctx.sampleRate));d[start+j]+=Math.sin(2*Math.PI*freq*j/ctx.sampleRate)*env*.3}});const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;return{src}}
+const SOUNDS=[
+  {name:'White Noise',desc:'Classic steady hiss — most popular for all ages',icon:'🌬️',bg:'bg-lav',make:makeWhiteNoise},
+  {name:'Pink Noise',desc:'Softer than white noise, like distant rain',icon:'🌧️',bg:'bg-mint',make:makePinkNoise},
+  {name:'Ocean Waves',desc:'Rhythmic wave pattern — calming for older babies',icon:'🌊',bg:'bg-moon',make:makeOcean},
+  {name:'Heartbeat',desc:'Mimics the womb — ideal for newborns 0–3 months',icon:'❤️',bg:'bg-blush',make:makeHeartbeat},
+  {name:'Rain Shower',desc:'Gentle rain — light, natural, non-intrusive',icon:'🍃',bg:'bg-mint',make:makeRain},
+  {name:'Womb Shush',desc:'Replicated shushing — great for colic',icon:'🤫',bg:'bg-lav',make:makeShush},
+  {name:'Fan Hum',desc:'Low constant hum — masks household noise',icon:'💨',bg:'bg-moon',make:makeFan},
+  {name:'Lullaby',desc:'Gentle instrumental melody for wind-down',icon:'🎵',bg:'bg-blush',make:makeLullaby},
+];
+let vol=.7;
+function setVolume(v){vol=v/100;if(gainNode)gainNode.gain.value=vol}
+document.getElementById('sounds-grid').innerHTML=SOUNDS.map((s,i)=>`
+  <div class="scard" id="sc-${i}" onclick="toggleSound(${i})">
+    <div class="scard-icon ${s.bg}">${s.icon}</div>
+    <div class="scard-info"><div class="scard-name">${s.name}</div><div class="scard-desc">${s.desc}</div></div>
+    <button class="play-btn" id="pb-${i}">▶</button>
+  </div>`).join('');
+function stopCurrent(){if(currentSource){try{if(Array.isArray(currentSource))currentSource.forEach(s=>{try{s.stop()}catch(e){}});else currentSource.stop()}catch(e){}currentSource=null}}
+function toggleSound(i){
+  const ctx=getCtx();if(ctx.state==='suspended')ctx.resume();
+  if(currentSoundIdx===i){stopCurrent();document.getElementById('sc-'+i).classList.remove('playing');document.getElementById('pb-'+i).innerHTML='▶';currentSoundIdx=null;return}
+  if(currentSoundIdx!==null){stopCurrent();document.getElementById('sc-'+currentSoundIdx).classList.remove('playing');document.getElementById('pb-'+currentSoundIdx).innerHTML='▶'}
+  gainNode=ctx.createGain();gainNode.gain.value=vol;gainNode.connect(ctx.destination);
+  const made=SOUNDS[i].make(ctx);
+  if(made.node){made.node.connect(gainNode);made.src.start();currentSource=made.src}
+  else{made.src.connect(gainNode);made.src.start();currentSource=made.src}
+  currentSoundIdx=i;
+  document.getElementById('sc-'+i).classList.add('playing');
+  document.getElementById('pb-'+i).innerHTML=`<div class="wave">${[.7,1,.5,.9,.6].map((d,j)=>`<div class="wbar" style="--d:${d}s;--dly:${j*.1}s"></div>`).join('')}</div>`;
+  showToast('Playing '+SOUNDS[i].name);
+}
+
+// ── NAV ──
+function navTo(name,el){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  if(el)el.classList.add('active');
+  const map={home:'screen-home',sos:'screen-sos',sounds:'screen-sounds',premium:'screen-premium',tracker:'screen-home'};
+  showScreen(map[name]||'screen-home');
+}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');document.getElementById(id).scrollTop=0}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1900)}
+</script>
+</body>
+</html>
